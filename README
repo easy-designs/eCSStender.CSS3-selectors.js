@@ -1,0 +1,17 @@
+== eCSStender.CSS3-selectors.js
+
+An implementation of the CSS3 Selectors module using eCSStender.
+
+== What's new in this release?
+
+See the CHANGELOG file for information on what's new.
+
+== The distribution
+
+Besides the eCSStender.CSS3-selectors.js file in /src, there's a
+test tree (/test) included which holds assorted tests for the selectors module.
+
+== License
+
+eCSStender.CSS3-selectors.js is licensed under the terms of the MIT License,
+see the included MIT-LICENSE file.

@@ -1,0 +1,45 @@
+/* =Basic Layout */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #fff;
+  padding: 10px 0 0 10px;
+} /* comment */
+h1 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+#content {
+  width: 60%;
+  float: left;
+  position: relative;
+}
+#sidebar {
+  background: #ccc;
+  margin: 0 10px;
+  padding: 10px 20px;
+  width: 30%;
+  float: right;
+  position: relative;
+}
+
+/* =Compound Class Test */
+p.test { color: green; }
+p.alt.test { color: red; }
+
+/* =Nth-child Tests */
+#table-1 tr:nth-child(even) {
+  background-color: #ccc;
+}
+#table-1 tr:nth-child(odd) {
+  background-color: #666;
+}
+/* =White space is valid in the expression */
+#table-2 tr:nth-child( 2n + 1 ) {
+  background-color: #f00;
+}
+#table-2 tr:nth-child(2n) {
+  background-color: transparent;
+}
+/* =White space is valid in the expression */
+#table-2 tr:nth-child( 3n + 4 ) {
+  background-color: #f90;
+}

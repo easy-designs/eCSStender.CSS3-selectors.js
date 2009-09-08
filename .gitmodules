@@ -1,0 +1,3 @@
+[submodule "./eCSStender"]
+	path = ./eCSStender
+	url = git@github.com:easy-designs/eCSStender.js.git

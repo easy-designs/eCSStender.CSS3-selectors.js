@@ -1,0 +1,5 @@
+*v0.1* (2009-09-08)
+
+* Initial checkin of progress
+* complete :nth-child() support
+* initial patch of compound classes (for IE6)
