@@ -117,3 +117,18 @@ input:disabled {
 input:checked {
   display: block;
 }
+
+/* =not() */
+table td:not(:empty) {
+  border: 5px dotted;
+}
+
+/* adjacent sibling */
+#sidebar p + p + p + p {
+  color: blue;
+}
+
+/* general sibling */
+#sidebar p ~ p {
+  color: #666;
+}

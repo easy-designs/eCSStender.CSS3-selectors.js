@@ -383,6 +383,83 @@ eCSStender.register(
   }
 );
 
+// :first-line/:first-letter/::first-line/::first-letter
+// how do we handle these?
+
+// :before/:after/::before/::after
+// need a clean element
+
+// :not
+eCSStender.register(
+  { 'selector': /:not\([^)]*\)/,
+    'test':     function(){
+      // the markup
+      var
+      div  = document.createElement('div'),
+      p    = document.createElement('p'),
+      p2   = p.cloneNode(true);
+      p.setAttribute('id','no');
+      // the test
+      return ( ! eCSStender.isSupported( 'selector', 'div p:not(#no)', div, p2 ) );
+    }
+  },
+  '*',
+  function( selector, properties, medium, specificity ){
+    var els = Sizzle( selector );
+    for ( i=0; i<els.length; i++ )
+    {
+      eCSStender.applyWeightedStyle( els[i], properties, specificity );
+    }
+  }
+);
+
+// adjacent sibling
+eCSStender.register(
+  { 'selector': /[^(]*\+[^)]*/,
+    'test':     function(){
+      // the markup
+      var
+      div  = document.createElement('div'),
+      p    = document.createElement('p'),
+      p2   = p.cloneNode(true);
+      // the test
+      return ( ! eCSStender.isSupported( 'selector', 'div p + p', div, p2 ) );
+    }
+  },
+  '*',
+  function( selector, properties, medium, specificity ){
+    var els = Sizzle( selector );
+    for ( i=0; i<els.length; i++ )
+    {
+      eCSStender.applyWeightedStyle( els[i], properties, specificity );
+    }
+  }
+);
+
+// general sibling
+eCSStender.register(
+  { 'selector': /[^(]*~[^)]*/,
+    'test':     function(){
+      // the markup
+      var
+      div  = document.createElement('div'),
+      p    = document.createElement('p'),
+      p2   = p.cloneNode(true);
+      // the test
+      return ( ! eCSStender.isSupported( 'selector', 'div p ~ p', div, p2 ) );
+    }
+  },
+  '*',
+  function( selector, properties, medium, specificity ){
+    alert('boom');
+    var els = Sizzle( selector );
+    for ( i=0; i<els.length; i++ )
+    {
+      eCSStender.applyWeightedStyle( els[i], properties, specificity );
+    }
+  }
+);
+
 
 
 
