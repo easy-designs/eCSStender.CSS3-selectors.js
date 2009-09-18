@@ -2,6 +2,7 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: #fff;
+  color:  #000;
   padding: 10px 0 0 10px;
 } /* comment */
 h1 {
@@ -25,6 +26,18 @@ h1 {
 p.test { color: green; }
 p.alt.test { color: red; }
 
+/* Attribute Tests */
+p[class] { border: 1px solid; }
+p[class~=test] { border-width: 10px; }
+p[class^=alt] { border-width: 5px; }
+p[class$=est] { border-color: blue; }
+p[class*=alt] { border-color: purple; }
+table[id|=table] { border: 3px solid red; }
+
+/* Root */
+html:root { background: #ebebeb; }
+body:root { color: red; } /* red herring */
+
 /* =Nth-child Tests */
 #table-1 tr:nth-child(even) {
   background-color: #ccc;
@@ -42,4 +55,65 @@ p.alt.test { color: red; }
 /* =White space is valid in the expression */
 #table-2 tr:nth-child( 3n + 4 ) {
   background-color: #f90;
+}
+
+/* =nth-last-child */
+#table-3 tr:nth-last-child( even ) {
+  background-color: #666;
+}
+#table-3 tr:nth-last-child( 2n + 1 ) {
+  background-color: #ccc;
+}
+
+/* =nth-of-type */
+body table:nth-of-type( 2 ) {
+  border-color: green;
+}
+
+/* =nth-last-of-type */
+body table:nth-last-of-type( 1 ) {
+  border-color: blue;
+}
+
+/* =first-child / last-child / only-child */
+#sidebar > :first-child {
+  border: 1px solid red;
+}
+#sidebar > :last-child {
+  border: 1px solid blue;
+}
+#p-2 > :only-child {
+  border: 1px solid;
+}
+
+/* =first-of-type / last-of-type / only-of-type */
+#p-1 strong:first-of-type {
+  color: red;
+}
+#p-1 strong:last-of-type {
+  color: blue;
+}
+#p-2 strong:only-of-type {
+  color: green;
+}
+
+/* =empty */
+table td:empty {
+  border: 1px solid #000;
+}
+
+/* =lang() */
+p:lang(fr) {
+  color: blue;
+}
+
+/* Form pseudo-classes */
+input:enabled {
+  border: 5px solid red;
+}
+input:disabled {
+  border: 5px solid #666;
+}
+input:checked {
+  display: block;
 }
