@@ -5,130 +5,73 @@ body {
   color:  #000;
   padding: 10px 0 0 10px;
 } /* comment */
-h1 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-#content {
-  width: 60%;
-  float: left;
-  position: relative;
-}
-#sidebar {
-  background: #ccc;
-  margin: 0 10px;
-  padding: 10px 20px;
-  width: 30%;
-  float: right;
-  position: relative;
-}
+table { margin: 0 0 1em; width: 100%; }
+div.test { background: #ebebeb; padding: 1px 10px 10px; margin: 0 0 1em; }
+#content { width: 60%; position: relative; }
 
 /* =Compound Class Test */
-p.test { color: green; }
-p.alt.test { color: red; }
+#compound-selectors-test p.test { color: green; }
+#compound-selectors-test p.alt.test { color: red; }
 
 /* Attribute Tests */
-p[class] { border: 1px solid; }
-p[class~=test] { border-width: 10px; }
-p[class^=alt] { border-width: 5px; }
-p[class$=est] { border-color: blue; }
-p[class*=alt] { border-color: purple; }
-table[id|=table] { border: 3px solid red; }
+#attribute-selectors-test p[class] { border: 10px solid; }            /* attribute */
+#attribute-selectors-test p[class*=test] { border-color: purple; }    /* substring */
+#attribute-selectors-test p[class~=test] { border-color: green; }     /* contains */
+#attribute-selectors-test p[class^=test] { border-color: red; }       /* starts with */
+#attribute-selectors-test p[class$=test] { border-color: blue; }      /* ends with */
+#attribute-selectors-test p[class|=test] { border-color: orange; }    /* class=test or test-* */
 
 /* Root */
-html:root { background: #ebebeb; }
-body:root { color: red; } /* red herring */
+html:root #root-selectors-test p { color: green; }
+body:root #root-selectors-test p { color: red; } /* red herring -- should not apply */
 
 /* =Nth-child Tests */
-#table-1 tr:nth-child(even) {
-  background-color: #ccc;
-}
-#table-1 tr:nth-child(odd) {
-  background-color: #666;
-}
+#nth-child-tests #table-1 tr:nth-child(even) { background-color: #ccc; }
+#nth-child-tests #table-1 tr:nth-child(odd) { background-color: #666; }
 /* =White space is valid in the expression */
-#table-2 tr:nth-child( 2n + 1 ) {
-  background-color: #f00;
-}
-#table-2 tr:nth-child(2n) {
-  background-color: transparent;
-}
+#nth-child-tests #table-2 tr:nth-child( 2n + 1 ) { background-color: #f00; }
+#nth-child-tests #table-2 tr:nth-child(2n) { background-color: transparent; }
 /* =White space is valid in the expression */
-#table-2 tr:nth-child( 3n + 4 ) {
-  background-color: #f90;
-}
+#nth-child-tests #table-2 tr:nth-child( 3n + 4 ) { background-color: #f90; }
 
 /* =nth-last-child */
-#table-3 tr:nth-last-child( even ) {
-  background-color: #666;
-}
-#table-3 tr:nth-last-child( 2n + 1 ) {
-  background-color: #ccc;
-}
+#nth-last-child-tests tr:nth-last-child( even ) { background-color: #666; }
+#nth-last-child-tests tr:nth-last-child( 2n + 1 ) { background-color: #ccc; }
 
-/* =nth-of-type */
-body table:nth-of-type( 2 ) {
-  border-color: green;
-}
-
-/* =nth-last-of-type */
-body table:nth-last-of-type( 1 ) {
-  border-color: blue;
-}
+/* =nth-of-type, nth-last-of-type */
+#nth-of-type-tests p:nth-of-type( 2n+1 ) { color: green; }
+#nth-of-type-tests p:nth-of-type( 2 ) { color: blue; }
+#nth-of-type-tests p:nth-last-of-type( 1 ) { color: purple; }
 
 /* =first-child / last-child / only-child */
-#sidebar > :first-child {
-  border: 1px solid red;
-}
-#sidebar > :last-child {
-  border: 1px solid blue;
-}
-#p-2 > :only-child {
-  border: 1px solid;
-}
+#first-last-only-tests p :first-child { color: green; }
+#first-last-only-tests p :last-child { color: blue; }
+#first-last-only-tests p :only-child { color: purple; }
 
 /* =first-of-type / last-of-type / only-of-type */
-#p-1 strong:first-of-type {
-  color: red;
-}
-#p-1 strong:last-of-type {
-  color: blue;
-}
-#p-2 strong:only-of-type {
-  color: green;
-}
+#first-last-only-of-type-tests p strong:first-of-type { color: green; }
+#first-last-only-of-type-tests p strong:last-of-type { color: blue; }
+#first-last-only-of-type-tests p strong:only-of-type { color: purple; }
 
 /* =empty */
-table td:empty {
-  border: 1px solid #000;
-}
+#empty-tests tr { background: white; }
+#empty-tests td:empty { background: green; }
 
 /* =lang() */
-p:lang(fr) {
-  color: blue;
-}
+#lang-tests p:lang(fr) { color: green; }
 
 /* Form pseudo-classes */
-input:enabled {
-  border: 5px solid red;
-}
-input:disabled {
-  border: 5px solid #666;
-}
-input:checked {
-  display: block;
-}
+#form-pseudo-class-tests input:enabled { border: 5px solid green; background: #fff; }
+#form-pseudo-class-tests input:disabled { border: 5px solid #666; background: #fff; }
+#form-pseudo-class-tests input[type=radio] { margin-right: 5px; }
+#form-pseudo-class-tests input[type=radio]:checked { margin-right: 50px; }
 
 /* =not() */
-table td:not(:empty) {
-  border: 5px dotted;
-}
+#not-tests th, #not-tests td { background-color: white; }
+#not-tests td:not(:empty) { background-color: green; color: white; }
 
 /* adjacent sibling */
-#sidebar p + p + p + p {
-  color: blue;
-}
+#adjacent-sibling-test p + p { color: green; }
 
 /* general sibling */
-#sidebar p ~ p {
-  color: #666;
-}
+#general-sibling-test p ~ p { color: green; }

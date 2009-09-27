@@ -1,3 +1,12 @@
 [submodule "./eCSStender"]
 	path = ./eCSStender
-	url = git@github.com:easy-designs/eCSStender.js.git
+	url = git://github.com/easy-designs/eCSStender.js.git
+[submodule "./sizzle"]
+	path = ./sizzle
+	url = git://github.com/jeresig/sizzle.git
+[submodule "vendors/eCSStender"]
+	path = vendors/eCSStender
+	url = git://github.com/easy-designs/eCSStender.js.git
+[submodule "vendors/sizzle"]
+	path = vendors/sizzle
+	url = git://github.com/jeresig/sizzle.git
