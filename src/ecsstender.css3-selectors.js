@@ -66,7 +66,7 @@
     '*',
     function( selector, properties, medium, specificity ){
       if ( medium!='screen' ){ return; }
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -220,7 +220,7 @@
     '*',
     function( selector, properties, medium, specificity ){
       selector = selector.replace( /(type\()\s*/g, '$1' ).replace( /\s*(\+)\s*/g, '$1' ).replace( /\s*(\))/g, '$1' );
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -243,7 +243,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -267,7 +267,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -320,7 +320,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -349,7 +349,7 @@
     function( selector, properties, medium, specificity ){
       // convert for Sizzle
       selector = selector.replace( /:lang\(([^)]*)\)/, '[lang=$1]' );
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -380,7 +380,7 @@
     function( selector, properties, medium, specificity ){
       // TODO: need to make these dynamic which means adding and removing styles
       // (and keeping track of the previous versions)
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -410,7 +410,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var els = Sizzle( selector );
+      var i, els = Sizzle( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -419,32 +419,34 @@
   );
 
   // adjacent sibling
-  // interferes with the nth-child... adjust the RegEx
-//  eCSStender.register(
-//    { 'selector': /[^(]*\+[^)]*/,
-//      'test':     function(){
-//        // the markup
-//        var
-//        div  = document.createElement('div'),
-//        p    = document.createElement('p'),
-//        p2   = p.cloneNode(true);
-//        // the test
-//        return ( ! eCSStender.isSupported( 'selector', 'div p + p', div, p2 ) );
-//      }
-//    },
-//    '*',
-//    function( selector, properties, medium, specificity ){
-//      var els = Sizzle( selector );
-//      for ( i=0; i<els.length; i++ )
-//      {
-//        eCSStender.applyWeightedStyle( els[i], properties, specificity );
-//      }
-//    }
-//  );
-
-  // general sibling
   eCSStender.register(
-    { 'selector': /[^(]*~[^)]*/,
+    { 'selector': function(){
+        return ( this.match(/\+/) &&
+                 ! this.match( /:nth-(?:last-)?(?:child|of-type)\(\s*(?:even|odd|[+-]?\d*?|[+-]?\d*?n(?:\s*[+-]\s*\d*?)?)\s*\)/ ) );
+      },
+      'test':     function(){
+        // the markup
+        var
+        div  = document.createElement('div'),
+        p    = document.createElement('p'),
+        p2   = p.cloneNode(true);
+        // the test
+        return ( ! eCSStender.isSupported( 'selector', 'div p + p', div, p2 ) );
+      }
+    },
+    '*',
+    function( selector, properties, medium, specificity ){
+      var i, els = Sizzle( selector );
+      for ( i=0; i<els.length; i++ )
+      {
+        eCSStender.applyWeightedStyle( els[i], properties, specificity );
+      }
+    }
+  );
+
+  // general sibling - not currently Sizzle-supported
+  eCSStender.register(
+    { 'selector': /~[^=]/,
       'test':     function(){
         // the markup
         var
@@ -457,10 +459,56 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var els = Sizzle( selector );
-      for ( i=0; i<els.length; i++ )
+      var
+      instance   = new Date().getTime(),
+      select_arr = selector.split('~'),
+      select = select_arr.shift(),
+      els = Sizzle( select ),
+      i, iLen, genSiblings = [];
+      alert('looking at '+ select + ', found ' + els.length );
+      for ( i=0, iLen=els.length; i<iLen; i++ )
       {
-        eCSStender.applyWeightedStyle( els[i], properties, specificity );
+        findGeneralSiblings( els[i], 0 );
+      }
+      alert('total generalSiblings: ' + genSiblings.length);
+      for ( i=0, iLen=genSiblings.length; i<iLen; i++ )
+      {
+        eCSStender.applyWeightedStyle( genSiblings[i], properties, specificity );
+      }
+      // need to recursively loop down each level
+      function findGeneralSiblings( el, depth )
+      {
+        var
+        i, len, el = el.nextSibling,
+        selector   = select_arr[depth],
+        collection = [];
+        alert('looking for '+selector);
+        while ( el )
+        {
+          if ( typeof el.instance == 'undefined' ||
+               el.instance != instance ) collection.push( el );
+          el.instance = instance; // keep the element form being hit 2x or more in the same extension
+          el = el.nextSibling;
+        }
+        collection = Sizzle.matches( selector, collection );
+        alert('found ' + collection.length + ' matches for ' + selector );
+        if ( collection.length > 0 &&
+             typeof select_arr[depth+1] != 'undefined' )
+        {
+          alert('decending');
+          for ( i=0, len=collection.length; i<len; i++ )
+          {
+            findGeneralSiblings( collection[i], depth+1 );
+          }
+        }
+        else if ( collection.length > 0 )
+        {
+          alert('pushing');
+          for ( i=0, len=collection.length; i<len; i++ )
+          {
+            genSiblings.push( collection[i] );
+          }
+        }
       }
     }
   );
