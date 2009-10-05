@@ -1,4 +1,11 @@
-(function(Sizzle){
+(function(){
+  // define our selector engine or die
+  var $ = eCSStender.methods.findBySelector;
+  if ( ! ( $ instanceof Function ) ){
+    throw('eCSStender.methods.findBySelector is not defined. eCSStender.css3-selectors.js is quitting.');
+    return;
+  }
+  
   // CLASSES
   // compound class selection (no other class selections seem to be an issue)
   eCSStender.register(
@@ -34,7 +41,7 @@
       );
       for ( j=0; j<matches.length; j++ )
       {
-        els = Sizzle( matches[j]['selector'] );
+        els = $( matches[j]['selector'] );
         for ( k=0; k<els.length; k++ )
         {
           eCSStender.applyWeightedStyle( els[k], matches[j]['properties'], matches[j]['specificity'] );
@@ -66,7 +73,7 @@
     '*',
     function( selector, properties, medium, specificity ){
       if ( medium!='screen' ){ return; }
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -88,7 +95,7 @@
 //    '*',
 //    function( selector, properties, medium, specificity ){
 //      if ( medium!='screen' ){ return; }
-//      var els = Sizzle( selector ),
+//      var els = $( selector ),
 //      /* root can only be the first element (IE gets this wrong) */
 //      root = document.getElementsByTagName('script')[0];
 //      while ( root.parentNode )
@@ -145,7 +152,7 @@
       // no nth-child support natively, so inline is only option
       else
       {
-        els = Sizzle( selector );
+        els = $( selector );
         for ( i=0; i<els.length; i++ )
         {
           eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -195,7 +202,7 @@
       // no nth-child support natively, so inline is only option
       else
       {
-        els = Sizzle( selector );
+        els = $( selector );
         for ( i=0; i<els.length; i++ )
         {
           eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -220,7 +227,7 @@
     '*',
     function( selector, properties, medium, specificity ){
       selector = selector.replace( /(type\()\s*/g, '$1' ).replace( /\s*(\+)\s*/g, '$1' ).replace( /\s*(\))/g, '$1' );
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -243,7 +250,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -267,7 +274,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -297,7 +304,7 @@
 //    },
 //    '*',
 //    function( selector, properties, medium, specificity ){
-//      var els = Sizzle( selector );
+//      var els = $( selector );
 //      for ( i=0; i<els.length; i++ )
 //      {
 //        eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -320,7 +327,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -347,9 +354,9 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      // convert for Sizzle
+      // convert for $
       selector = selector.replace( /:lang\(([^)]*)\)/, '[lang=$1]' );
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -380,7 +387,7 @@
     function( selector, properties, medium, specificity ){
       // TODO: need to make these dynamic which means adding and removing styles
       // (and keeping track of the previous versions)
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -410,7 +417,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -436,7 +443,7 @@
     },
     '*',
     function( selector, properties, medium, specificity ){
-      var i, els = Sizzle( selector );
+      var i, els = $( selector );
       for ( i=0; i<els.length; i++ )
       {
         eCSStender.applyWeightedStyle( els[i], properties, specificity );
@@ -444,7 +451,7 @@
     }
   );
 
-  // general sibling - not currently Sizzle-supported
+  // general sibling - not currently $-supported
   eCSStender.register(
     { 'selector': /~[^=]/,
       'test':     function(){
@@ -463,7 +470,7 @@
       instance   = new Date().getTime(),
       select_arr = selector.split('~'),
       select = select_arr.shift(),
-      els = Sizzle( select ),
+      els = $( select ),
       i, iLen, genSiblings = [];
       alert('looking at '+ select + ', found ' + els.length );
       for ( i=0, iLen=els.length; i<iLen; i++ )
@@ -490,7 +497,7 @@
           el.instance = instance; // keep the element form being hit 2x or more in the same extension
           el = el.nextSibling;
         }
-        collection = Sizzle.matches( selector, collection );
+        collection = $.matches( selector, collection );
         alert('found ' + collection.length + ' matches for ' + selector );
         if ( collection.length > 0 &&
              typeof select_arr[depth+1] != 'undefined' )
@@ -513,4 +520,4 @@
     }
   );
   
-})(Sizzle);
+})();

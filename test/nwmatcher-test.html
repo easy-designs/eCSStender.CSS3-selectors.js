@@ -12,8 +12,13 @@
     <meta name="Rating" content="General" />
     <link rel="stylesheet" type="text/css" media="screen" href="css3-selectors.css" />
     <script type="text/javascript" src="../vendors/eCSStender/src/eCSStender.js"></script>
-    <script type="text/javascript" src="../vendors/sizzle/sizzle.js"></script>
-    <script type="text/javascript" src="../src/eCSStender.css3-selectors.js"></script>
+    <script type="text/javascript" src="../vendors/NWMatcher/src/nwmatcher.js"></script>
+    <script type="text/javascript">
+      // <![CDATA[
+      eCSStender.addMethod('findBySelector',NW.Dom.select);
+      // ]]>
+    </script>
+    <script type="text/javascript" src="../src/ecsstender.css3-selectors.js"></script>
   </head>
   <body>
     <div id="content">
@@ -53,10 +58,7 @@ body:root p { color: red; } /* red herring -- should not apply */</code></pre>
       <div class="test" id="nth-child-tests">
         <h2><code>:nth-child</code> Selectors</h2>
         <pre class="css"><code>#table-1 tr:nth-child(even) { background-color: #ccc; }
-#table-1 tr:nth-child(odd) { background-color: #666; }
-#table-2 tr:nth-child( 2n + 1 ) { background-color: #f00; }
-#table-2 tr:nth-child(2n) { background-color: transparent; }
-#table-2 tr:nth-child( 3n + 4 ) { background-color: #f90; }</code></pre>
+#table-1 tr:nth-child(odd) { background-color: #666; }</code></pre>
         <table id="table-1">
           <tr>
             <th>This row should be dark gray</th>
@@ -79,7 +81,9 @@ body:root p { color: red; } /* red herring -- should not apply */</code></pre>
             <td>#666</td>
           </tr>
         </table>
-              
+        <pre class="css"><code>#table-2 tr:nth-child( 2n + 1 ) { background-color: #f00; }
+#table-2 tr:nth-child(2n) { background-color: transparent; }
+#table-2 tr:nth-child( 3n + 4 ) { background-color: #f90; }</code></pre>
         <table id="table-2">
           <tr>
             <th>This row should be red</th>
