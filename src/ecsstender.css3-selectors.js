@@ -1,3 +1,13 @@
+/*------------------------------------------------------------------------------
+Function:       eCSStender.css3-selectors.js
+Author:         Aaron Gustafson (aaron at easy-designs dot net)
+Creation Date:  2009-09-17
+Version:        0.1
+Homepage:       http://github.com/easy-designs/eCSStender.css3-selectors.js
+License:        MIT License 
+Note:           If you change or improve on this script, please let us know by
+                emailing the author (above) with a link to your demo page.
+------------------------------------------------------------------------------*/
 (function(){
   // define our selector engine or die
   var $ = eCSStender.methods.findBySelector;
@@ -452,72 +462,72 @@
   );
 
   // general sibling - not currently $-supported
-  eCSStender.register(
-    { 'selector': /~[^=]/,
-      'test':     function(){
-        // the markup
-        var
-        div  = document.createElement('div'),
-        p    = document.createElement('p'),
-        p2   = p.cloneNode(true);
-        // the test
-        return ( ! eCSStender.isSupported( 'selector', 'div p ~ p', div, p2 ) );
-      }
-    },
-    '*',
-    function( selector, properties, medium, specificity ){
-      var
-      instance   = new Date().getTime(),
-      select_arr = selector.split('~'),
-      select = select_arr.shift(),
-      els = $( select ),
-      i, iLen, genSiblings = [];
-      alert('looking at '+ select + ', found ' + els.length );
-      for ( i=0, iLen=els.length; i<iLen; i++ )
-      {
-        findGeneralSiblings( els[i], 0 );
-      }
-      alert('total generalSiblings: ' + genSiblings.length);
-      for ( i=0, iLen=genSiblings.length; i<iLen; i++ )
-      {
-        eCSStender.applyWeightedStyle( genSiblings[i], properties, specificity );
-      }
-      // need to recursively loop down each level
-      function findGeneralSiblings( el, depth )
-      {
-        var
-        i, len, el = el.nextSibling,
-        selector   = select_arr[depth],
-        collection = [];
-        alert('looking for '+selector);
-        while ( el )
-        {
-          if ( typeof el.instance == 'undefined' ||
-               el.instance != instance ) collection.push( el );
-          el.instance = instance; // keep the element form being hit 2x or more in the same extension
-          el = el.nextSibling;
-        }
-        collection = $.matches( selector, collection );
-        alert('found ' + collection.length + ' matches for ' + selector );
-        if ( collection.length > 0 &&
-             typeof select_arr[depth+1] != 'undefined' )
-        {
-          alert('decending');
-          for ( i=0, len=collection.length; i<len; i++ )
-          {
-            findGeneralSiblings( collection[i], depth+1 );
-          }
-        }
-        else if ( collection.length > 0 )
-        {
-          alert('pushing');
-          for ( i=0, len=collection.length; i<len; i++ )
-          {
-            genSiblings.push( collection[i] );
-          }
-        }
-      }
-    }
-  );
+  //eCSStender.register(
+  //  { 'selector': /~[^=]/,
+  //    'test':     function(){
+  //      // the markup
+  //      var
+  //      div  = document.createElement('div'),
+  //      p    = document.createElement('p'),
+  //      p2   = p.cloneNode(true);
+  //      // the test
+  //      return ( ! eCSStender.isSupported( 'selector', 'div p ~ p', div, p2 ) );
+  //    }
+  //  },
+  //  '*',
+  //  function( selector, properties, medium, specificity ){
+  //    var
+  //    instance   = new Date().getTime(),
+  //    select_arr = selector.split('~'),
+  //    select = select_arr.shift(),
+  //    els = $( select ),
+  //    i, iLen, genSiblings = [];
+  //    alert('looking at '+ select + ', found ' + els.length );
+  //    for ( i=0, iLen=els.length; i<iLen; i++ )
+  //    {
+  //      findGeneralSiblings( els[i], 0 );
+  //    }
+  //    alert('total generalSiblings: ' + genSiblings.length);
+  //    for ( i=0, iLen=genSiblings.length; i<iLen; i++ )
+  //    {
+  //      eCSStender.applyWeightedStyle( genSiblings[i], properties, specificity );
+  //    }
+  //    // need to recursively loop down each level
+  //    function findGeneralSiblings( el, depth )
+  //    {
+  //      var
+  //      i, len, el = el.nextSibling,
+  //      selector   = select_arr[depth],
+  //      collection = [];
+  //      alert('looking for '+selector);
+  //      while ( el )
+  //      {
+  //        if ( typeof el.instance == 'undefined' ||
+  //             el.instance != instance ) collection.push( el );
+  //        el.instance = instance; // keep the element form being hit 2x or more in the same extension
+  //        el = el.nextSibling;
+  //      }
+  //      collection = $.matches( selector, collection );
+  //      alert('found ' + collection.length + ' matches for ' + selector );
+  //      if ( collection.length > 0 &&
+  //           typeof select_arr[depth+1] != 'undefined' )
+  //      {
+  //        alert('decending');
+  //        for ( i=0, len=collection.length; i<len; i++ )
+  //        {
+  //          findGeneralSiblings( collection[i], depth+1 );
+  //        }
+  //      }
+  //      else if ( collection.length > 0 )
+  //      {
+  //        alert('pushing');
+  //        for ( i=0, len=collection.length; i<len; i++ )
+  //        {
+  //          genSiblings.push( collection[i] );
+  //        }
+  //      }
+  //    }
+  //  }
+  //);
   
 })();
