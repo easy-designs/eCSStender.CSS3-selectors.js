@@ -226,7 +226,7 @@ Note:           If you change or improve on this script, please let us know by
            supported( SELECTOR, calc, d, p ) )
       {
         
-        func = embedNth;
+        func = embed;
       }
       func( selector, properties, medium, specificity );
       return func;
@@ -264,7 +264,7 @@ Note:           If you change or improve on this script, please let us know by
            supported( SELECTOR, calc, d, p ) )
       {
         
-        func = embedNth;
+        func = embed;
       }
       func( selector, properties, medium, specificity );
       return func;
