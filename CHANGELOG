@@ -1,3 +1,10 @@
+*v0.2* (2010-07-05)
+
+* Substantial rewrite of extensions
+* Created a "debug" version that throws errors
+* Adjusted tests to display whether or not the selector engine is capable of handling the selector in question
+* upgraded eCSStender to 1.2.5.3
+
 *v0.1* (2009-09-08)
 
 * Initial checkin of progress

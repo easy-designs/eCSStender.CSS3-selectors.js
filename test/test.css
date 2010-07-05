@@ -8,6 +8,8 @@ body {
 table { margin: 0 0 1em; width: 100%; }
 div.test { background: #ebebeb; padding: 1px 10px 10px; margin: 0 0 1em; }
 #content { width: 60%; position: relative; }
+.unsupported { border: 0 !important; color: red; font-weight: bold; margin: 0; }
+
 
 /* =Compound Class Test */
 #compound-selectors-test p.test { color: green; }
@@ -61,10 +63,10 @@ body:root #root-selectors-test p { color: red; } /* red herring -- should not ap
 #lang-tests p:lang(fr) { color: green; }
 
 /* Form pseudo-classes */
-#form-pseudo-class-tests input[type=text]:enabled { border: 5px solid green; background: #fff; }
-#form-pseudo-class-tests input[type=text]:disabled { border: 5px solid #666; background: #fff; }
-#form-pseudo-class-tests input[type=radio] { margin-right: 5px; }
-#form-pseudo-class-tests input[type=radio]:checked { margin-right: 50px; }
+#form-pseudo-class-tests .text input:enabled { border: 5px solid green; background: #fff; }
+#form-pseudo-class-tests .text input:disabled { border: 5px solid #666; background: #fff; }
+#form-pseudo-class-tests .radio input { margin-right: 5px; }
+#form-pseudo-class-tests .radio input:checked { margin-right: 50px; }
 
 /* =not() */
 #not-tests th, #not-tests td { background-color: white; }
@@ -74,4 +76,4 @@ body:root #root-selectors-test p { color: red; } /* red herring -- should not ap
 #adjacent-sibling-test p + p { color: green; }
 
 /* general sibling */
-#form-pseudo-class-tests ~ #general-sibling-test p ~ p { color: green; }
+#general-sibling-test p ~ p { color: green; }

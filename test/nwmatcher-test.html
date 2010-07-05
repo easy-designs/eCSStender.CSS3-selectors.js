@@ -17,9 +17,19 @@
       // <![CDATA[
       eCSStender.disableCache();
       eCSStender.addMethod('findBySelector',NW.Dom.select);
+      function testSupport( selector )
+      {
+        try {
+          eCSStender.methods.findBySelector(selector);
+        }
+        catch( e )
+        {
+          document.write('<p class="unsupported">' + selector + ' is unsupported by this selector engine.</p>');
+        }
+      }
       // ]]>
     </script>
-    <script type="text/javascript" src="../src/ecsstender.css3-selectors.js"></script>
+    <script type="text/javascript" src="../src/eCSStender.CSS3-selectors.js"></script>
   </head>
   <body>
     <div id="content">
@@ -27,6 +37,11 @@
       
       <div class="test" id="compound-selectors-test">
         <h2>Compound <code>class</code> Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport('.alt.test');
+          // ]]>
+        </script>
         <pre class="css"><code>p.test { color: green; }
 p.alt.test { color: red; }</code></pre>
         <p class="test"><strong>This paragraph should be green.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</p>
@@ -35,6 +50,16 @@ p.alt.test { color: red; }</code></pre>
       
       <div class="test" id="attribute-selectors-test">
         <h2>Attribute Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport('[class]');
+          testSupport('[class*=test]');
+          testSupport('[class~=test]');
+          testSupport('[class^=test]');
+          testSupport('[class$=test]');
+          testSupport('[class|=test]');
+          // ]]>
+        </script>
         <pre class="css"><code>p[class] { border: 10px solid; }
 p[class*=test] { border-color: purple; }
 p[class~=test] { border-color: green; }
@@ -51,6 +76,11 @@ p[class|=test] { border-color: orange; }</code></pre>
 
       <div class="test" id="root-selectors-test">
         <h2><code>:root</code> Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':root');
+          // ]]>
+        </script>
         <pre class="css"><code>html:root p { color: green; }
 body:root p { color: red; } /* red herring -- should not apply */</code></pre>
         <p><strong>This paragraph should be green.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</p>
@@ -58,6 +88,12 @@ body:root p { color: red; } /* red herring -- should not apply */</code></pre>
       
       <div class="test" id="nth-child-tests">
         <h2><code>:nth-child</code> Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':nth-child(even)');
+          testSupport(':nth-child(2)');
+          // ]]>
+        </script>
         <pre class="css"><code>#table-1 tr:nth-child(even) { background-color: #ccc; }
 #table-1 tr:nth-child(odd) { background-color: #666; }</code></pre>
         <table id="table-1">
@@ -111,6 +147,12 @@ body:root p { color: red; } /* red herring -- should not apply */</code></pre>
       
       <div class="test" id="nth-last-child-tests">
         <h2><code>:nth-last-child</code> Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':nth-last-child(even)');
+          testSupport(':nth-last-child(2)');
+          // ]]>
+        </script>
         <pre class="css"><code>tr:nth-last-child( even ) { background-color: #666; }
 tr:nth-last-child( 2n + 1 ) { background-color: #ccc; }</code></pre>
         <table>
@@ -134,11 +176,19 @@ tr:nth-last-child( 2n + 1 ) { background-color: #ccc; }</code></pre>
             <th>This row should be light grey</th>
             <td>#ccc</td>
           </tr>
-        </table>    
+        </table>
       </div>
       
       <div class="test" id="nth-of-type-tests">
         <h2><code>:nth-of-type</code>, <code>:nth-last-of-type</code> Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':nth-of-type(odd)');
+          testSupport(':nth-of-type(2)');
+          testSupport(':nth-last-of-type(odd)');
+          testSupport(':nth-last-of-type(2)');
+          // ]]>
+        </script>
         <pre class="css"><code>p:nth-of-type( 2n+1 ) { color: green; }
 p:nth-of-type( 2 ) { color: blue; }
 p:nth-last-of-type( 1 ) { color: purple; }</code></pre>
@@ -150,8 +200,15 @@ p:nth-last-of-type( 1 ) { color: purple; }</code></pre>
       
       <div class="test" id="first-last-only-tests">
         <h2><code>:first-child</code>, <code>:last-child</code>, <code>:only-child</code> Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':first-child');
+          testSupport(':last-child');
+          testSupport(':only-child');
+          // ]]>
+        </script>
         <pre class="css"><code>p :first-child { color: green; }
-:last-child { color: blue; }
+p :last-child { color: blue; }
 p :only-child { color: purple; }</code></pre>
         <p><strong>This text should be green.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. <strong>This text should be the default color.</strong> Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. <em>This text should be blue.</em> Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. <em>This text should be purple.</em> Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
@@ -159,6 +216,13 @@ p :only-child { color: purple; }</code></pre>
       
       <div class="test" id="first-last-only-of-type-tests">
         <h2><code>:first-of-type</code>, <code>:last-of-type</code>, <code>:only-of-type</code> Selectors</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':first-of-type');
+          testSupport(':last-of-type');
+          testSupport(':only-of-type');
+          // ]]>
+        </script>
         <pre class="css"><code>p strong:first-of-type { color: green; }
 p strong:last-of-type { color: blue; }
 p strong:only-of-type { color: purple; }</code></pre>
@@ -168,6 +232,11 @@ p strong:only-of-type { color: purple; }</code></pre>
 
       <div class="test" id="empty-tests">
         <h2><code>:empty</code> Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':empty');
+          // ]]>
+        </script>
         <pre class="css"><code>tr { background: white; }
 td:empty { background: green; }</code></pre>
         <table>
@@ -196,6 +265,11 @@ td:empty { background: green; }</code></pre>
 
       <div class="test" id="lang-tests">
         <h2><code>:lang</code> Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':lang()');
+          // ]]>
+        </script>
         <pre class="css"><code>p:lang(fr) { color: green; }</code></pre>
         <p><strong>This paragraph should be the default color.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
         <p lang="fr"><strong>This paragraph should be green.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
@@ -203,23 +277,30 @@ td:empty { background: green; }</code></pre>
 
       <div class="test" id="form-pseudo-class-tests">
         <h2><code>:enabled</code>, <code>:disabled</code>, <code>:checked</code> Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':enabled');
+          testSupport(':disabled');
+          testSupport(':checked');
+          // ]]>
+        </script>
         <pre class="css"><code>input:enabled { border: 5px solid green; background: #fff; }
 input:disabled { border: 5px solid #666; background: #fff; }
 input[type=radio] { margin-right: 5px; }
 input[type=radio]:checked { margin-right: 50px; }</code></pre>
         <form action="">
-          <p>
+          <p class="text">
             <label for="enabled">This input should have a green border and white background</label>
             <input type="text" id="enabled" />
           </p>
-          <p>
+          <p class="text">
             <label for="disabled">This input should have a dark grey border and white background</label>
             <input type="text" id="disabled" disabled="disabled" />
           </p>
           <p>
             Depending on which one is checked, the right-hand margin should be adjusted:
           </p>
-          <ul>
+          <ul class="radio">
             <li><label for="checked-test-1">
               <input id="checked-test-1" type="radio" name="test" /> Testing</label></li>
             <li><label for="checked-test-2">
@@ -230,6 +311,11 @@ input[type=radio]:checked { margin-right: 50px; }</code></pre>
       
       <div class="test" id="not-tests">
         <h2><code>:not</code> Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport(':not()');
+          // ]]>
+        </script>
         <pre class="css"><code>th, td { background-color: white; }
 td:not(:empty) { background-color: green; color: white; }</code></pre>
         <table>
@@ -258,6 +344,11 @@ td:not(:empty) { background-color: green; color: white; }</code></pre>
       
       <div class="test" id="adjacent-sibling-test">
         <h2>Adjacent Sibling Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport('p + p');
+          // ]]>
+        </script>
         <pre class="css"><code>p + p { color: green; }</code></pre>
         <p><strong>This paragraph should be the default color.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
         <p><strong>This paragraph should be green.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
@@ -269,6 +360,11 @@ td:not(:empty) { background-color: green; color: white; }</code></pre>
 
       <div class="test" id="general-sibling-test">
         <h2>General Sibling Selector</h2>
+        <script type="text/javascript">
+          // <![CDATA[
+          testSupport('p ~ p');
+          // ]]>
+        </script>
         <pre class="css"><code>p ~ p { color: green; }</code></pre>
         <p><strong>This paragraph should be the default color.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>
         <p><strong>This paragraph should be green.</strong> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip. Ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum. Zzril delenit augue duis dolore te feugait nulla facilisi.</p>

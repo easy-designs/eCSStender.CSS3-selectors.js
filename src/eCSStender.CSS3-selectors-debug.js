@@ -43,7 +43,7 @@ Note:           If you change or improve on this script, please let us know by
         style( $els[i], properties, specificity );
       }
     } catch(e) {
-      // throw new Error( LIB_ERROR + selector );
+      throw new Error( LIB_ERROR + selector );
     }
   },
   notScreen = function( medium )
@@ -79,7 +79,7 @@ Note:           If you change or improve on this script, please let us know by
   // define our selector engine or die
   if ( ! ( $ instanceof Function ) )
   {
-    // throw new Error('eCSStender.methods.findBySelector is not defined. eCSStender.css3-selectors.js is quitting.');
+    throw new Error('eCSStender.methods.findBySelector is not defined. eCSStender.css3-selectors.js is quitting.');
   }
   
   // CLASSES
