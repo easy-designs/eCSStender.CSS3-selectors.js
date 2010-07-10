@@ -24,16 +24,19 @@
         }
         catch( e )
         {
-          document.write('<p class="unsupported">' + selector + ' is unsupported by this selector engine.</p>');
+          document.write('<p class="unsupported">' + selector + ' is unsupported by this selector engine.');
         }
       }
       // ]]>
     </script>
-    <script type="text/javascript" src="../src/ecsstender.css3-selectors.js"></script>
+    <!--script type="text/javascript" src="../src/ecsstender.css3-selectors.js"></script-->
+    <script type="text/javascript" src="../src/eCSStender.CSS3-selectors-debug.js"></script>
   </head>
   <body>
     <div id="content">
-      <h1>CSS3 Selectors Tests</h1>
+      <h1>CSS3 Selectors Tests - Sizzle Engine</h1>
+      
+      <p>If a selector is unsupported by the selector engine, a notice will display. If the test still passes, either the browser has native support or there is a workaround.</p>
       
       <div class="test" id="compound-selectors-test">
         <h2>Compound <code>class</code> Selectors</h2>
@@ -267,7 +270,7 @@ td:empty { background: green; }</code></pre>
         <h2><code>:lang</code> Selector</h2>
         <script type="text/javascript">
           // <![CDATA[
-          testSupport(':lang()');
+          testSupport(':lang(fr)');
           // ]]>
         </script>
         <pre class="css"><code>p:lang(fr) { color: green; }</code></pre>
@@ -313,7 +316,7 @@ input[type=radio]:checked { margin-right: 50px; }</code></pre>
         <h2><code>:not</code> Selector</h2>
         <script type="text/javascript">
           // <![CDATA[
-          testSupport(':not()');
+          testSupport(':not(p)');
           // ]]>
         </script>
         <pre class="css"><code>th, td { background-color: white; }

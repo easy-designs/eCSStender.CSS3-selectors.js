@@ -159,40 +159,47 @@ Note:           If you change or improve on this script, please let us know by
   })();
 
   // :root
-  //e.register(
-  //  { fingerprint: EASY + 'root',
-  //    selector: /:root/,
-  //    test:     function(){
-  //      // the markup
-  //      html = document.getElementsByTagName('html')[0];
-  //      // the test
-  //      return ( ! supported( SELECTOR, ':root', false, html ) );
-  //    }
-  //  },
-  //  EVERYTHING,
-  //  function( selector, properties, medium, specificity ){
-  //    if ( notScreen(medium) ){ return; }
-  //    var els, i,
-  //    /* root can only be the first element (IE gets this wrong) */
-  //    root = document.getElementsByTagName('script')[0];
-  //    while ( root.parentNode )
-  //    {
-  //      if ( root.parentNode.nodeName == '#document' ){ break; }
-  //      root = root.parentNode;
-  //    }
-  //    try {
-  //      els = $( selector );
-  //      i = els.length;
-  //      while ( i-- )
-  //      {
-  //        if ( els[i] !== root ) { continue; }
-  //        style( els[i], properties, specificity );
-  //      }
-  //    } catch(e) {
-  //      // throw new Error( LIB_ERROR + selector );
-  //    }
-  //  }
-  //);
+  (function(){
+    var
+    re_root = /^\s?(?:html)?:root/,
+    HTML    = 'html';
+    function normal( selector, properties, medium, specificity )
+    {
+      if ( notScreen(medium) ||
+           ! selector.match( re_root ) ){ return; }
+      inline( selector, properties, medium, specificity);
+    }
+    function modified( selector, properties, medium, specificity )
+    {
+      if ( notScreen(medium) ||
+           ! selector.match( re_root ) ){ return; }
+      selector = selector.replace( re_root, HTML );
+      inline( selector, properties, medium, specificity);
+    }
+    e.register(
+      { fingerprint: EASY + 'root',
+        selector: /:root/,
+        test:     function(){
+          // the markup
+          html = document.getElementsByTagName(HTML)[0];
+          // the test
+          return ( ! supported( SELECTOR, ':root', false, html ) );
+        }
+      },
+      EVERYTHING,
+      function( selector, properties, medium, specificity ){
+        if ( notScreen(medium) ){ return; }
+        var func = normal;
+        try {
+          $( selector );
+        } catch(e) {
+          func = modified;
+        }
+        func( selector, properties, medium, specificity );
+        return func;
+      }
+    );
+  })();
 
   // nth-child
   e.register(

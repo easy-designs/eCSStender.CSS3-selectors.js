@@ -8,7 +8,7 @@ body {
 table { margin: 0 0 1em; width: 100%; }
 div.test { background: #ebebeb; padding: 1px 10px 10px; margin: 0 0 1em; }
 #content { width: 60%; position: relative; }
-.unsupported { border: 0 !important; color: red; font-weight: bold; margin: 0; }
+.unsupported { border: 0 !important; color: red !important; font-weight: bold; margin: 0; }
 
 
 /* =Compound Class Test */

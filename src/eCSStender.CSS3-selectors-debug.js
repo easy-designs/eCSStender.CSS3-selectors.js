@@ -43,9 +43,11 @@ Note:           If you change or improve on this script, please let us know by
         style( $els[i], properties, specificity );
       }
     } catch(e) {
-      throw new Error( LIB_ERROR + selector );
+      //throw new Error( LIB_ERROR + selector );
     }
   },
+  eFunc    = function(){},
+  // methods
   notScreen = function( medium )
   {
     return medium != 'screen';
@@ -54,11 +56,84 @@ Note:           If you change or improve on this script, please let us know by
   {
     return selector.replace( re_nth, '$1$2$3$4$5' );
   },
+  // Event stuff
+  // Based on Dean Edwards' work
+  addEvent    = function( el, evt, handler )
+  {
+    var
+    guid = 1,
+    ON   = 'on';
+    addEvent = function()
+    {
+      if ( ! handler.$$guid )
+      {
+        handler.$$guid = guid++;
+      }
+      if ( ! el.events )
+      {
+        el.events = {};
+      }
+      var handlers = el.events[evt];
+      if ( ! handlers )
+      {
+        handlers = el.events[evt] = {};
+        if ( element[ON+evt] )
+        {
+          handlers[0] = element[ON+evt];
+        }
+      }
+      handlers[handler.$$guid] = handler;
+      element[ON+evt] = handleEvent;
+    };
+    listen( el, evt, handler );
+  },
+  handleEvent = function( event )
+  {
+    function handle( event )
+    {
+      var
+      ret      = true,
+      handlers = this.events[event.type],
+      i        = handlers.length;
+      while ( i-- )
+      {
+        this.$$handleEvent = handlers[i];
+        if ( this.$$handleEvent( event ) === false )
+        {
+          ret = false;
+        }
+      }
+      return ret;
+    }
+    function fix( event )
+    {
+      event.preventDefault = function(){
+        this.returnValue = false;
+      };
+      event.stopPropagation = function(){
+        this.cancelBubble = true;
+      };
+      return event;
+    }
+    if ( event )
+    {
+      handleEvent = handle;
+    }
+    else
+    {
+      handleEvent = function()
+      {
+        handle( fix( window.event ) );
+      };
+    }
+    handleEvent( event );
+  },
   // strings
   EASY        = 'net.easy-designs.',
   SELECTOR    = 'selector',
   PROPERTIES  = 'properties',
   SPECIFICITY = 'specificity',
+  CLICK       = 'click',
   EVERYTHING  = '*',
   EMPTY       = '',
   CURLY_O     = '{',
@@ -159,40 +234,47 @@ Note:           If you change or improve on this script, please let us know by
   })();
 
   // :root
-  //e.register(
-  //  { fingerprint: EASY + 'root',
-  //    selector: /:root/,
-  //    test:     function(){
-  //      // the markup
-  //      html = document.getElementsByTagName('html')[0];
-  //      // the test
-  //      return ( ! supported( SELECTOR, ':root', false, html ) );
-  //    }
-  //  },
-  //  EVERYTHING,
-  //  function( selector, properties, medium, specificity ){
-  //    if ( notScreen(medium) ){ return; }
-  //    var els, i,
-  //    /* root can only be the first element (IE gets this wrong) */
-  //    root = document.getElementsByTagName('script')[0];
-  //    while ( root.parentNode )
-  //    {
-  //      if ( root.parentNode.nodeName == '#document' ){ break; }
-  //      root = root.parentNode;
-  //    }
-  //    try {
-  //      els = $( selector );
-  //      i = els.length;
-  //      while ( i-- )
-  //      {
-  //        if ( els[i] !== root ) { continue; }
-  //        style( els[i], properties, specificity );
-  //      }
-  //    } catch(e) {
-  //      // throw new Error( LIB_ERROR + selector );
-  //    }
-  //  }
-  //);
+  (function(){
+    var
+    re_root = /^\s?(?:html)?:root/,
+    HTML    = 'html';
+    function normal( selector, properties, medium, specificity )
+    {
+      if ( notScreen(medium) ||
+           ! selector.match( re_root ) ){ return; }
+      inline( selector, properties, medium, specificity);
+    }
+    function modified( selector, properties, medium, specificity )
+    {
+      if ( notScreen(medium) ||
+           ! selector.match( re_root ) ){ return; }
+      selector = selector.replace( re_root, HTML );
+      inline( selector, properties, medium, specificity);
+    }
+    e.register(
+      { fingerprint: EASY + 'root',
+        selector: /:root/,
+        test:     function(){
+          // the markup
+          html = document.getElementsByTagName(HTML)[0];
+          // the test
+          return ( ! supported( SELECTOR, ':root', false, html ) );
+        }
+      },
+      EVERYTHING,
+      function( selector, properties, medium, specificity ){
+        if ( notScreen(medium) ){ return; }
+        var func = normal;
+        try {
+          $( selector );
+        } catch(e) {
+          func = modified;
+        }
+        func( selector, properties, medium, specificity );
+        return func;
+      }
+    );
+  })();
 
   // nth-child
   e.register(
@@ -363,7 +445,62 @@ Note:           If you change or improve on this script, please let us know by
   );
 
   // :target
-  // How do we test this one?
+  (function(){
+    var
+    last_tgt  = false,
+    curr_tgt  = false,
+    curr_el   = false,
+    the_class = e.makeUniqueClass(),
+    toggle    = e.toggleClass;
+    function target()
+    {
+      if ( curr_tgt != last_tgt ){
+        if ( curr_el )
+        {
+          toggle( curr_el, the_class );
+        }
+        last_tgt = curr_tgt;
+        curr_el = document.getElementById( curr_tgt );
+        if ( curr_el )
+        {
+          toggle( curr_el, the_class );
+        }
+      }
+    }
+    eCSStender.register(
+      { selector: /:target/,
+        test:     function(){
+          // the markup
+          var
+          d = div.cloneNode(true),
+          p = para.cloneNode(true);
+          d.appendChild( p );
+          document.expando = false;
+          // the test
+          return ( ! supported( SELECTOR, 'div p, div p:target', d, p ) );
+        }
+      },
+      EVERYTHING,
+      function(){
+        // TODO: re-embed the styles using the new class 
+        curr_tgt = window.location.hash;
+        target();
+        addEvent( document.body, CLICK, function( event ){
+          var
+          el     = event.target,
+          re     = /^#(\w+)$/;
+          if ( el.nodeName.toLowerCase() == 'a' &&
+               el.href &&
+               el.href.match( re ) )
+          {
+            curr_tgt = el.href.replace( re, '$1' );
+            target();
+          }
+        });
+        return eFunc;
+      });
+  })();
+  
 
   // :lang()
   e.register(
