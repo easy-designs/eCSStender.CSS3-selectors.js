@@ -1,3 +1,8 @@
+*v0.3* (2010-07-12)
+
+* Rewrote a few extensions
+* added dynamic support for :checked
+
 *v0.2* (2010-07-05)
 
 * Substantial rewrite of extensions

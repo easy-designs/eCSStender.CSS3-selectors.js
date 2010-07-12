@@ -2,7 +2,7 @@
 Function:       eCSStender.css3-selectors.js
 Author:         Aaron Gustafson (aaron at easy-designs dot net)
 Creation Date:  2009-09-17
-Version:        0.2
+Version:        0.3
 Homepage:       http://github.com/easy-designs/eCSStender.css3-selectors.js
 License:        MIT License 
 Note:           If you change or improve on this script, please let us know by
@@ -43,7 +43,7 @@ Note:           If you change or improve on this script, please let us know by
         style( $els[i], properties, specificity );
       }
     } catch(e) {
-      //throw new Error( LIB_ERROR + selector );
+      throw new Error( LIB_ERROR + selector );
     }
   },
   eFunc    = function(){},
@@ -57,76 +57,37 @@ Note:           If you change or improve on this script, please let us know by
     return selector.replace( re_nth, '$1$2$3$4$5' );
   },
   // Event stuff
-  // Based on Dean Edwards' work
+  // Based on John Resig's work
   addEvent    = function( el, evt, handler )
   {
-    var
-    guid = 1,
-    ON   = 'on';
-    addEvent = function()
+    if ( el.addEventListener )
     {
-      if ( ! handler.$$guid )
+      addEvent = function( el, evt, handler )
       {
-        handler.$$guid = guid++;
-      }
-      if ( ! el.events )
-      {
-        el.events = {};
-      }
-      var handlers = el.events[evt];
-      if ( ! handlers )
-      {
-        handlers = el.events[evt] = {};
-        if ( element[ON+evt] )
-        {
-          handlers[0] = element[ON+evt];
-        }
-      }
-      handlers[handler.$$guid] = handler;
-      element[ON+evt] = handleEvent;
-    };
-    listen( el, evt, handler );
-  },
-  handleEvent = function( event )
-  {
-    function handle( event )
-    {
-      var
-      ret      = true,
-      handlers = this.events[event.type],
-      i        = handlers.length;
-      while ( i-- )
-      {
-        this.$$handleEvent = handlers[i];
-        if ( this.$$handleEvent( event ) === false )
-        {
-          ret = false;
-        }
-      }
-      return ret;
-    }
-    function fix( event )
-    {
-      event.preventDefault = function(){
-        this.returnValue = false;
+        el.addEventListener( evt, handler, false );
       };
-      event.stopPropagation = function(){
-        this.cancelBubble = true;
-      };
-      return event;
-    }
-    if ( event )
-    {
-      handleEvent = handle;
     }
     else
     {
-      handleEvent = function()
+      addEvent = function( el, evt, handler )
       {
-        handle( fix( window.event ) );
+        var E = 'e';
+        el[E+evt+handler] = handler;
+        el[evt+handler]   = function(){
+          var e =  window.event;
+          e.target = e.srcElement;
+          e.preventDefault = function(){
+            this.returnValue = false;
+          };
+          e.stopPropagation = function(){
+            this.cancelBubble = true;
+          };
+          el[E+evt+handler]( e );
+        };
+        el.attachEvent( 'on'+evt, el[evt+handler] );
       };
     }
-    handleEvent( event );
+    addEvent( el, evt, handler );
   },
   // strings
   EASY        = 'net.easy-designs.',
@@ -355,7 +316,8 @@ Note:           If you change or improve on this script, please let us know by
   
   // :nth-of-type, :nth-last-of-type
   e.register(
-    { selector: /:nth-(?:last-)?of-type\(\s*(?:even|odd|[+-]?\d*?|[+-]?\d*?n(?:\s*[+-]\s*\d*?)?)\s*\)/,
+    { fingerprint: EASY + 'nth-of-type',
+      selector: /:nth-(?:last-)?of-type\(\s*(?:even|odd|[+-]?\d*?|[+-]?\d*?n(?:\s*[+-]\s*\d*?)?)\s*\)/,
       test:     function(){
         // the markup
         var
@@ -403,6 +365,7 @@ Note:           If you change or improve on this script, please let us know by
     selectors = { 'div p:first-of-type': /:first-of-type/,
                   'div p:last-of-type':  /:last-of-type/,
                   'div div:only-of-type':  /:only-of-type/ },
+    selector,
     d  = div.cloneNode(true),
     d2 = div.cloneNode(true),
     p  = para.cloneNode(true),
@@ -427,84 +390,103 @@ Note:           If you change or improve on this script, please let us know by
     }
   })();
   
-  // :empty
-  eCSStender.register(
-    { selector: /:empty/,
-      test:     function(){
-        // the markup
-        var
-        d = div.cloneNode(true),
-        p = para.cloneNode(true);
-        d.appendChild( p );
-        // the test
-        return ( ! supported( SELECTOR, 'div p:empty', d, p ) );
-      }
-    },
-    EVERYTHING,
-    inline
-  );
-
-  // :target
+  // :empty/:enabled/:disabled
   (function(){
     var
-    last_tgt  = false,
-    curr_tgt  = false,
-    curr_el   = false,
-    the_class = e.makeUniqueClass(),
-    toggle    = e.toggleClass;
-    function target()
+    selectors = { 'div input:empty': /:empty/,
+                  'div input:disabled': /:disabled/,
+                  'div input:enabled': /:enabled/ },
+    selector, inputs, i=0,
+    d = div.cloneNode(true);
+    d.innerHTML = '<input type="text" disabled="disabled"/><input type="text"/>';
+    inputs = d.getElementsByTagName('input');
+    for ( selector in selectors )
     {
-      if ( curr_tgt != last_tgt ){
-        if ( curr_el )
-        {
-          toggle( curr_el, the_class );
-        }
-        last_tgt = curr_tgt;
-        curr_el = document.getElementById( curr_tgt );
-        if ( curr_el )
-        {
-          toggle( curr_el, the_class );
-        }
-      }
+      (function( selector, lookup ){
+         var target = inputs[i];
+         e.register(
+           { fingerprint: EASY + lookup.toString().replace(/[\/:]/g,''),
+             selector: lookup,
+             test:     function(){
+               return ! supported( SELECTOR, selector, d, target );
+             }
+           },
+           EVERYTHING,
+           inline
+         );
+      })( selector, selectors[selector] );
+      i = i == 1 ? 1 : i + 1;
     }
-    eCSStender.register(
-      { selector: /:target/,
-        test:     function(){
-          // the markup
-          var
-          d = div.cloneNode(true),
-          p = para.cloneNode(true);
-          d.appendChild( p );
-          document.expando = false;
-          // the test
-          return ( ! supported( SELECTOR, 'div p, div p:target', d, p ) );
-        }
-      },
-      EVERYTHING,
-      function(){
-        // TODO: re-embed the styles using the new class 
-        curr_tgt = window.location.hash;
-        target();
-        addEvent( document.body, CLICK, function( event ){
-          var
-          el     = event.target,
-          re     = /^#(\w+)$/;
-          if ( el.nodeName.toLowerCase() == 'a' &&
-               el.href &&
-               el.href.match( re ) )
-          {
-            curr_tgt = el.href.replace( re, '$1' );
-            target();
-          }
-        });
-        return eFunc;
-      });
   })();
-  
 
+  // :target
+  //(function(){
+  //  var
+  //  last_tgt  = false,
+  //  curr_tgt  = false,
+  //  curr_el   = false,
+  //  the_class = e.makeUniqueClass(),
+  //  toggle    = e.toggleClass;
+  //  function target()
+  //  {
+  //    if ( curr_tgt != last_tgt ){
+  //      if ( curr_el )
+  //      {
+  //        toggle( curr_el, the_class );
+  //      }
+  //      last_tgt = curr_tgt;
+  //      curr_el = document.getElementById( curr_tgt );
+  //      if ( curr_el )
+  //      {
+  //        toggle( curr_el, the_class );
+  //      }
+  //    }
+  //  }
+  //  eCSStender.register(
+  //    { fingerprint: EASY + 'target',
+  //      selector: /:target/,
+  //      test:     function(){
+  //        // the markup
+  //        var
+  //        d = div.cloneNode(true),
+  //        p = para.cloneNode(true);
+  //        d.appendChild( p );
+  //        document.expando = false;
+  //        // the test
+  //        return ( ! supported( SELECTOR, 'div p, div p:target', d, p ) );
+  //      }
+  //    },
+  //    EVERYTHING,
+  //    function(){
+  //      curr_tgt = window.location.hash;
+  //      target();
+  //      addEvent( document.body, CLICK, function( event ){
+  //        var
+  //        el     = event.target,
+  //        re     = /^#(\w+)$/;
+  //        if ( el.nodeName.toLowerCase() == 'a' &&
+  //             el.href &&
+  //             el.href.match( re ) )
+  //        {
+  //          curr_tgt = el.href.replace( re, '$1' );
+  //          target();
+  //        }
+  //      });
+  //      function func( selector, properties, medium )
+  //      {
+  //        var re = /:target/;
+  //        selector = selector.replace( re, the_class );
+  //        embed( selector, properties, medium );
+  //      };
+  //      func( selector, properties, medium );
+  //      return func;
+  //    });
+  //})();
+  
   // :lang()
   e.register(
-    { selector: /:lang\(.*\)/,
+    { fingerprint: EASY + 'lang',
+      selector: /:lang\(.*\)/,
       test:     function(){
         // the markup
         var
@@ -535,36 +517,81 @@ Note:           If you change or improve on this script, please let us know by
     }
   );
 
-  // :enabled/:disabled/:checked
-  eCSStender.register(
-    { selector: /:(?:(?:en|dis)abled|checked)/,
-      test:     function(){
-        // the markup
-        var
-        d = div.cloneNode(true),
-        inputs, i1, i2, i3;
-        d.innerHTML = '<input type="text" /><input type="text" disabled="disabled" /><input type="checkbox" checked="checked" />';
-        inputs = d.getElementsByTagName('input');
-        i1 = inputs[0];
-        i2 = inputs[1];
-        i3 = inputs[2];
-        // the test
-        return ( ! supported( SELECTOR, 'div :enabled', d, i1 ) ||
-                 ! supported( SELECTOR, 'div :disabled', d, i2 ) ||
-                 ! supported( SELECTOR, 'div :checked', d, i3 ) );
+  // :checked
+  (function(){
+    var
+    the_class = e.makeUniqueClass(),
+    the_regex = /:checked/,
+    classify  = function()
+    {
+      var
+      inputs = document.getElementsByTagName('input'),
+      i      = inputs.length;
+      while ( i-- )
+      {
+        if ( inputs[i].checked )
+        {
+          e.addClass( inputs[i], the_class );
+        }
+        else
+        {
+          e.removeClass( inputs[i], the_class );
+        }
       }
-    },
-    EVERYTHING,
-    // TODO: need to make these dynamic which means adding and removing styles
-    // (and keeping track of the previous versions)
-    inline
-  );
+    };
+    e.register(
+      { fingerprint: EASY + 'checked',
+        selector: the_regex,
+        test:     function(){
+          var
+          d = div.cloneNode(true),
+          i;
+          d.innerHTML = '<input type="checkbox" checked="checked" />';
+          i = d.getElementsByTagName('input')[0];
+          return ! supported( SELECTOR, 'div input:checked', d, i );
+        }
+      },
+      EVERYTHING,
+      function( selector, properties, medium, specificity ){
+        // initialize
+        classify();
+        // only add the event once
+        addEvent( document.body, CLICK, function( e ){
+          var el = e.target;
+          if ( el.nodeName.toLowerCase() == 'input' &&
+               ( el.getAttribute('type') == 'radio' ||
+                 el.getAttribute('type') == 'checkbox' ) )
+          {
+            classify();
+          }
+        });
+        // then switch to embed a modified selector
+        function modify( selector, properties, medium, specificity )
+        {
+          selector = selector.replace( the_regex, DOT + the_class );
+          embed( selector, properties, medium );
+        }
+        modify( selector, properties, medium, specificity );
+        return modify;
+      });
+  })();
 
   // :first-line/:first-letter/::first-line/::first-letter
   // how do we handle these?
 
   // :before/:after/::before/::after
   // need a clean element
+  // use element height to determine support
+  // var
+  // d = document.createElement('div'),
+  // p = document.createElement('p'),
+  // s = document.createElement('style');
+  // d.appendChild(p);
+  // document.body.appendChild(d);
+  // console.log(window.getComputedStyle(d,null).getPropertyValue('height'));
+  // s.appendChild(document.createTextNode('p:after{display:block;content:".";height:10px;}'));
+  // document.getElementsByTagName('head')[0].appendChild(s);
+  // console.log(window.getComputedStyle(d,null).getPropertyValue('height'));
 
   // :not
   e.register(
